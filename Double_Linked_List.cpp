@@ -1,9 +1,14 @@
 #include <iostream>
+#include <chrono>
 
 using std::cout;
 using std::cin;
 using std::string;
 using std::endl;
+
+using std::chrono::high_resolution_clock;
+using std::chrono::duration_cast;
+using std::chrono::nanoseconds;
 
 typedef struct Node
 {
@@ -38,14 +43,14 @@ int main()
     // Criação do cabelhaço da lista
     Node* head1 = NULL;
 
-    // Adicionando elementos na fila
-    addElementEnd(&head1, 5);
-    addElementEnd(&head1, 3);
-    addElementEnd(&head1, 1);
-    addElementEnd(&head1, 1);
-    addElementEnd(&head1, 10);
-    addElementEnd(&head1, 8);
-    addElementEnd(&head1, 9);
+    // Adicionando elementos na lista
+    for(int c = 1; c <= 10; c++){
+        addElementEnd(&head1, c);
+    }
+
+    // Desordena a lista
+    Node* finalNode = searchNodebyValue(head1, 10);
+    swapValue(head1->iValue, finalNode->iValue);
 
     // Impressão da lista
     cout << "LISTA NAO ORDENADA: " << endl;
@@ -58,29 +63,87 @@ int main()
     cout << "LISTA ORDENADA (BUBBLE): " << endl;
     printList(head1);
 
+    // Desordena a lista
+    finalNode = searchNodebyValue(head1, 10);
+    swapValue(head1->iValue, finalNode->iValue);
+
+    // Impressão da lista
+    cout << "LISTA NAO ORDENADA: " << endl;
+    printList(head1);
+
+    // Ordena a lista
+    optimizedSelectionSort(head1);
+
+    // Lista ordenada
+    cout << "LISTA ORDENADA (SELECTION): " << endl;
+    printList(head1);
+
+
+    // Teste com tempos em caso onde a lista esta ordenacada em quase toda parte
 
     // Criação do cabelhaço da lista
     Node* head2 = NULL;
 
-    // Adicionando elementos na fila
-    addElementEnd(&head2, 15);
-    addElementEnd(&head2, -3);
-    addElementEnd(&head2, 1);
-    addElementEnd(&head2, 3);
-    addElementEnd(&head2, 3);
-    addElementEnd(&head2, 8);
-    addElementEnd(&head2, -90);
+    // Adicionando elementos na lista
+    for(int c = 1; c <= 10000; c++){
+        addElementEnd(&head2, c);
+    }
 
-    // Impressão da lista
-    cout << "LISTA NAO ORDENADA: " << endl;
-    printList(head2);
+    // Desordena a lista
+    finalNode = searchNodebyValue(head2, 10000);
+    swapValue(head2->iValue, finalNode->iValue);
+
+    // Teste com Bubble Sort
 
     // Ordena a lista
-    optimizedSelectionSort(head2);
+    auto timeStart = high_resolution_clock::now();
+    bubbleSort(head2);
+    auto timeStop = high_resolution_clock::now();
 
-    // Lista ordenada
-    cout << "LISTA ORDENADA (SORT): " << endl;
-    printList(head2);
+    auto timeDuration = duration_cast<nanoseconds>(timeStop-timeStart);
+
+    cout << "Tempo gastado com bubble sort: " << timeDuration.count() << " nanosegundos" << endl;
+
+    // Desordena a lista
+    finalNode = searchNodebyValue(head2, 10000);
+    swapValue(head2->iValue, finalNode->iValue);
+
+    // Ordena a lista com algoritmo otimizado
+    timeStart = high_resolution_clock::now();
+    optimizedBubbleSort(head2);
+    timeStop = high_resolution_clock::now();
+
+    timeDuration = duration_cast<nanoseconds>(timeStop-timeStart);
+
+    cout << "Tempo gastado com bubble sort otimizado: " << timeDuration.count() << " nanosegundos" << endl;
+
+    // Desordena a lista
+    finalNode = searchNodebyValue(head2, 10);
+    swapValue(head2->iValue, finalNode->iValue);
+
+    // Teste com Selection Sort
+
+    // Ordena a lista
+    timeStart = high_resolution_clock::now();
+    selectionSort(head2);
+    timeStop = high_resolution_clock::now();
+
+    timeDuration = duration_cast<nanoseconds>(timeStop-timeStart);
+
+    cout << "Tempo gastado com selection sort: " << timeDuration.count() << " nanosegundos" << endl;
+
+    // Desordena a lista
+    finalNode = searchNodebyValue(head2, 10000);
+    swapValue(head2->iValue, finalNode->iValue);
+
+    // Ordena a lista com algoritmo otimizado
+    timeStart = high_resolution_clock::now();
+    optimizedSelectionSort(head2);
+    timeStop = high_resolution_clock::now();
+
+    timeDuration = duration_cast<nanoseconds>(timeStop-timeStart);
+
+    cout << "Tempo gastado com selection sort otimizado: " << timeDuration.count() << " nanosegundos" << endl;
 
     return 0;
 }

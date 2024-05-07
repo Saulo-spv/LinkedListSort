@@ -26,6 +26,7 @@ void swapValue(int&, int&);
 // Algoritmos de ordenação
 
 void bubbleSort(Node*);
+void optimizedBubbleSort(Node* head);
 
 void selectionSort_Aux(Node*);
 void selectionSort(Node*);
@@ -51,7 +52,7 @@ int main()
     printList(head1);
 
     // Ordena a lista
-    bubbleSort(head1);
+    optimizedBubbleSort(head1);
 
     // Lista ordenada
     cout << "LISTA ORDENADA (BUBBLE): " << endl;
@@ -311,13 +312,38 @@ void bubbleSort(Node* head) {
         return;
     }
 
+    Node* currentOuter = head; // Ponteiro para percorrer a lista externamente
+    Node* currentInner = NULL; // Ponteiro para percorrer a lista internamente
+
+    // Percorre a lista com dois loops
+    while(currentOuter->ptrNext != NULL){
+        currentInner = head;
+        while(currentInner->ptrNext != NULL){
+            // Compara e troca os elementos se necessário
+            if(currentInner->iValue > currentInner->ptrNext->iValue){
+                swapValue(currentInner->iValue, currentInner->ptrNext->iValue);
+            }
+            currentInner = currentInner->ptrNext;
+        }
+        currentOuter = currentOuter->ptrNext;
+    }
+}
+
+void optimizedBubbleSort(Node* head) {
+
+    // Verifica se a lista está vazia
+    if (head == nullptr) {
+        cout << "Empty list!" << endl;
+        return;
+    }
+
     // Inicializa o ponteiro 'last' e o coloca no final da lista
     Node* last = head;
     while(last->ptrNext != NULL) {
         last = last->ptrNext;
     }
 
-    Node* current = head;
+    Node* current = NULL;
 
     // Inicializa um flag que indica se ouve trocas naquela iteração
     bool swapped = true;

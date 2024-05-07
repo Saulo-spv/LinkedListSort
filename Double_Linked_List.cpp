@@ -21,78 +21,67 @@ void insertBefore(Node*, int);
 void deleteNode(Node**, Node*);
 void deleteNodebyValue(Node**, int);
 void printList(Node*);
-void bubbleSort(Node*);
 void swapValue(int&, int&);
+
+// Algoritmos de ordenação
+
+void bubbleSort(Node*);
+
+void selectionSort_Aux(Node*);
+void selectionSort(Node*);
+void selectionSort_Aux(Node*);
+void optimizedSelectionSort(Node*);
 
 int main()
 {
     // Criação do cabelhaço da lista
-    Node* head = NULL;
+    Node* head1 = NULL;
 
     // Adicionando elementos na fila
-    addElementEnd(&head, 5);
-    addElementEnd(&head, 3);
-    addElementEnd(&head, 1);
-    addElementEnd(&head, 1);
-    addElementEnd(&head, 10);
-    addElementEnd(&head, 8);
-    addElementEnd(&head, 9);
+    addElementEnd(&head1, 5);
+    addElementEnd(&head1, 3);
+    addElementEnd(&head1, 1);
+    addElementEnd(&head1, 1);
+    addElementEnd(&head1, 10);
+    addElementEnd(&head1, 8);
+    addElementEnd(&head1, 9);
 
     // Impressão da lista
-    printList(head);
+    cout << "LISTA NAO ORDENADA: " << endl;
+    printList(head1);
 
     // Ordena a lista
-    bubbleSort(head);
+    bubbleSort(head1);
 
     // Lista ordenada
-    printList(head);
+    cout << "LISTA ORDENADA (BUBBLE): " << endl;
+    printList(head1);
+
+
+    // Criação do cabelhaço da lista
+    Node* head2 = NULL;
+
+    // Adicionando elementos na fila
+    addElementEnd(&head2, 15);
+    addElementEnd(&head2, -3);
+    addElementEnd(&head2, 1);
+    addElementEnd(&head2, 3);
+    addElementEnd(&head2, 3);
+    addElementEnd(&head2, 8);
+    addElementEnd(&head2, -90);
+
+    // Impressão da lista
+    cout << "LISTA NAO ORDENADA: " << endl;
+    printList(head2);
+
+    // Ordena a lista
+    optimizedSelectionSort(head2);
+
+    // Lista ordenada
+    cout << "LISTA ORDENADA (SORT): " << endl;
+    printList(head2);
 
     return 0;
-}
-void swapValue(int& irefValue1, int& irefValue2)
-{
-    irefValue1 ^= irefValue2;
-    irefValue2 ^= irefValue1;
-    irefValue1 ^= irefValue2;
-}
-
-void bubbleSort(Node* head) {
-
-    // Verifica se a lista está vazia
-    if (head == nullptr) {
-        cout << "Empty list!" << endl;
-        return;
-    }
-
-    // Inicializa o ponteiro 'last' e o coloca no final da lista
-    Node* last = head;
-    while(last->ptrNext != NULL) {
-        last = last->ptrNext;
-    }
-
-    Node* current = head;
-
-    // Inicializa um flag que indica se ouve trocas naquela iteração
-    bool swapped = true;
-
-    // Enquanto não houver trocas em alguma iteração
-    while(swapped){
-        current = head;
-        swapped = false;
-
-        // Percorre a lista e compara elementos adjacentes
-        while(current != last){
-            // Se o valor atual for maior que o próximo, troca os valores
-            if(current->iValue > current->ptrNext->iValue){
-                swapValue(current->iValue, current->ptrNext->iValue);
-                // Define 'swapped' como verdadeiro, indicando que houve uma troca
-                swapped = true;
-            }
-            current = current->ptrNext;
-        }
-        // Atualiza 'last' para o nó anterior, pois os proximos ja estão ordenados
-        last = last->ptrPrev;
-    }
 }
 
 
@@ -299,5 +288,147 @@ void printList(Node* head)
             cout << current->iValue << " " << endl;
             current = current->ptrNext;
         } 
+    }
+}
+
+/*ALGORITMOS DE ORDENAÇÃO*/
+
+void swapValue(int& irefValue1, int& irefValue2)
+{
+    irefValue1 ^= irefValue2;
+    irefValue2 ^= irefValue1;
+    irefValue1 ^= irefValue2;
+}
+
+
+/*BUBBLESORT*/
+
+void bubbleSort(Node* head) {
+
+    // Verifica se a lista está vazia
+    if (head == nullptr) {
+        cout << "Empty list!" << endl;
+        return;
+    }
+
+    // Inicializa o ponteiro 'last' e o coloca no final da lista
+    Node* last = head;
+    while(last->ptrNext != NULL) {
+        last = last->ptrNext;
+    }
+
+    Node* current = head;
+
+    // Inicializa um flag que indica se ouve trocas naquela iteração
+    bool swapped = true;
+
+    // Enquanto não houver trocas em alguma iteração
+    while(swapped){
+        current = head;
+        swapped = false;
+
+        // Percorre a lista e compara elementos adjacentes
+        while(current != last){
+            // Se o valor atual for maior que o próximo, troca os valores
+            if(current->iValue > current->ptrNext->iValue){
+                swapValue(current->iValue, current->ptrNext->iValue);
+                // Define 'swapped' como verdadeiro, indicando que houve uma troca
+                swapped = true;
+            }
+            current = current->ptrNext;
+        }
+        // Atualiza 'last' para o nó anterior, pois os proximos ja estão ordenados
+        last = last->ptrPrev;
+    }
+}
+
+/*SELECTION*/
+
+void selectionSort_Aux(Node* ptrAtual)
+{
+    // Condição de parada (final da lista)
+    if (ptrAtual->ptrNext == NULL) return;
+
+    // Criação de nó dinâmico
+    Node* current = ptrAtual;
+    // Criação de nó pivô
+    Node* ptrPivot = ptrAtual;
+
+    // Percurso até o fim da lista
+    while (current != NULL)
+    {
+        // Se algum nó for menor que o pivô, atualizamos o pivô
+        if (current->iValue < ptrPivot->iValue) ptrPivot = current;
+        current = current->ptrNext;
+    }
+
+    // Se o pivô não for o nó atual, efetuamos a troca
+    if (ptrPivot != ptrAtual) swapValue(ptrPivot->iValue,ptrAtual->iValue);
+
+    // Chamamos recursivamente a função
+    selectionSort_Aux(ptrAtual->ptrNext);
+}
+
+void selectionSort(Node* head)
+{
+    // Se o cabeçalho for vazio, i.e., lista vazia
+    if (head == NULL)
+    {
+        cout << "Empty list!" << endl;
+    }
+    // Caso o cabeçalho fornecido não seja para o primeiro nó da fila
+    else if (head->ptrPrev != NULL)
+    {
+        cout << "Sorry, you're in the middle of list. Please try again with the head of the list." << endl;
+    }
+    else
+    {
+        selectionSort_Aux(head);
+    }
+}
+
+void optimizedSelectionSort_Aux(Node* ptrAtual, bool bOrdered)
+{
+    // Condição de parada (final da lista)
+    if (ptrAtual->ptrNext == NULL || bOrdered == true) return;
+
+    // Inicialização das variáveis
+    Node* current = ptrAtual;
+    Node* ptrPivot = ptrAtual;
+    bOrdered = true;
+
+    // Percurso até o fim da lista
+    while (current != NULL)
+    {   
+        // Caso a lista atual não esteja ordenada, atualizamos bOrdered
+        if (current->ptrPrev != NULL && current->ptrPrev->iValue > current->iValue) bOrdered = false; 
+
+        // Se algum nó for menor que o pivô, atualizamos o pivô
+        if (current->iValue < ptrPivot->iValue) ptrPivot = current;
+        current = current->ptrNext;
+    }
+
+    // Se o pivô não for o nó atual, efetuamos a troca
+    if (ptrPivot != ptrAtual) swapValue(ptrPivot->iValue,ptrAtual->iValue);
+
+    // Chamamos recursivamente a função
+    optimizedSelectionSort_Aux(ptrAtual->ptrNext, bOrdered);
+}
+
+void optimizedSelectionSort(Node* head)
+{
+    // Se o cabeçalho for vazio, i.e., lista vazia
+    if (head == NULL)
+    {
+        cout << "Empty list!" << endl;
+    }
+    // Caso o cabeçalho fornecido não seja para o primeiro nó da fila
+    else if (head->ptrPrev != NULL)
+    {
+        cout << "Sorry, you're in the middle of list. Please try again with the head of the list." << endl;
+    }
+    else
+    {
+        optimizedSelectionSort_Aux(head, false);
     }
 }

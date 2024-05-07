@@ -21,6 +21,8 @@ void insertBefore(Node*, int);
 void deleteNode(Node**, Node*);
 void deleteNodebyValue(Node**, int);
 void printList(Node*);
+void bubbleSort(Node*);
+void swapValue(int&, int&);
 
 int main()
 {
@@ -39,8 +41,60 @@ int main()
     // Impressão da lista
     printList(head);
 
+    // Ordena a lista
+    bubbleSort(head);
+
+    // Lista ordenada
+    printList(head);
+
     return 0;
 }
+void swapValue(int& irefValue1, int& irefValue2)
+{
+    irefValue1 ^= irefValue2;
+    irefValue2 ^= irefValue1;
+    irefValue1 ^= irefValue2;
+}
+
+void bubbleSort(Node* head) {
+
+    // Verifica se a lista está vazia
+    if (head == nullptr) {
+        cout << "Empty list!" << endl;
+        return;
+    }
+
+    // Inicializa o ponteiro 'last' e o coloca no final da lista
+    Node* last = head;
+    while(last->ptrNext != NULL) {
+        last = last->ptrNext;
+    }
+
+    Node* current = head;
+
+    // Inicializa um flag que indica se ouve trocas naquela iteração
+    bool swapped = true;
+
+    // Enquanto não houver trocas em alguma iteração
+    while(swapped){
+        current = head;
+        swapped = false;
+
+        // Percorre a lista e compara elementos adjacentes
+        while(current != last){
+            // Se o valor atual for maior que o próximo, troca os valores
+            if(current->iValue > current->ptrNext->iValue){
+                swapValue(current->iValue, current->ptrNext->iValue);
+                // Define 'swapped' como verdadeiro, indicando que houve uma troca
+                swapped = true;
+            }
+            current = current->ptrNext;
+        }
+        // Atualiza 'last' para o nó anterior, pois os proximos ja estão ordenados
+        last = last->ptrPrev;
+    }
+}
+
 
 Node* newNode(int iValue)
 {

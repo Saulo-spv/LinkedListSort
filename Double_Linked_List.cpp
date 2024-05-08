@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib> 
 #include <chrono>
 
 using std::cout;
@@ -83,15 +84,19 @@ int main()
 
     // Criação do cabelhaço da lista
     Node* head2 = NULL;
+    Node* head3 = NULL;
+    Node* head4 = NULL;
+    Node* head5 = NULL;
 
     // Adicionando elementos na lista
     for(int c = 1; c <= 10000; c++){
-        addElementEnd(&head2, c);
-    }
 
-    // Desordena a lista
-    finalNode = searchNodebyValue(head2, 10000);
-    swapValue(head2->iValue, finalNode->iValue);
+        int iNum = rand();
+        addElementEnd(&head2, iNum);
+        addElementEnd(&head3, iNum);
+        addElementEnd(&head4, iNum);
+        addElementEnd(&head5, iNum);
+    }
 
     // Teste com Bubble Sort
 
@@ -104,41 +109,29 @@ int main()
 
     cout << "Tempo gastado com bubble sort: " << timeDuration.count() << " nanosegundos" << endl;
 
-    // Desordena a lista
-    finalNode = searchNodebyValue(head2, 10000);
-    swapValue(head2->iValue, finalNode->iValue);
-
     // Ordena a lista com algoritmo otimizado
     timeStart = high_resolution_clock::now();
-    optimizedBubbleSort(head2);
+    optimizedBubbleSort(head3);
     timeStop = high_resolution_clock::now();
 
     timeDuration = duration_cast<nanoseconds>(timeStop-timeStart);
 
     cout << "Tempo gastado com bubble sort otimizado: " << timeDuration.count() << " nanosegundos" << endl;
 
-    // Desordena a lista
-    finalNode = searchNodebyValue(head2, 10);
-    swapValue(head2->iValue, finalNode->iValue);
-
     // Teste com Selection Sort
 
     // Ordena a lista
     timeStart = high_resolution_clock::now();
-    selectionSort(head2);
+    selectionSort(head4);
     timeStop = high_resolution_clock::now();
 
     timeDuration = duration_cast<nanoseconds>(timeStop-timeStart);
 
     cout << "Tempo gastado com selection sort: " << timeDuration.count() << " nanosegundos" << endl;
 
-    // Desordena a lista
-    finalNode = searchNodebyValue(head2, 10000);
-    swapValue(head2->iValue, finalNode->iValue);
-
     // Ordena a lista com algoritmo otimizado
     timeStart = high_resolution_clock::now();
-    optimizedSelectionSort(head2);
+    optimizedSelectionSort(head5);
     timeStop = high_resolution_clock::now();
 
     timeDuration = duration_cast<nanoseconds>(timeStop-timeStart);
@@ -440,19 +433,14 @@ void selectionSort_Aux(Node* ptrAtual)
 
     // Criação de nó dinâmico
     Node* current = ptrAtual;
-    // Criação de nó pivô
-    Node* ptrPivot = ptrAtual;
 
     // Percurso até o fim da lista
     while (current != NULL)
     {
-        // Se algum nó for menor que o pivô, atualizamos o pivô
-        if (current->iValue < ptrPivot->iValue) ptrPivot = current;
+        // Se algum nó for menor que o atual, atualizamos o atual
+        if (current->iValue < ptrAtual->iValue) swapValue(ptrAtual->iValue,ptrAtual->iValue);
         current = current->ptrNext;
     }
-
-    // Se o pivô não for o nó atual, efetuamos a troca
-    if (ptrPivot != ptrAtual) swapValue(ptrPivot->iValue,ptrAtual->iValue);
 
     // Chamamos recursivamente a função
     selectionSort_Aux(ptrAtual->ptrNext);
@@ -476,22 +464,19 @@ void selectionSort(Node* head)
     }
 }
 
-void optimizedSelectionSort_Aux(Node* ptrAtual, bool bOrdered)
+void optimizedSelectionSort_Aux(Node* ptrAtual)
 {
     // Condição de parada (final da lista)
-    if (ptrAtual->ptrNext == NULL || bOrdered == true) return;
+    if (ptrAtual->ptrNext == NULL) return;
 
-    // Inicialização das variáveis
+    // Criação de nó dinâmico
     Node* current = ptrAtual;
+    // Criação de nó pivô
     Node* ptrPivot = ptrAtual;
-    bOrdered = true;
 
     // Percurso até o fim da lista
     while (current != NULL)
-    {   
-        // Caso a lista atual não esteja ordenada, atualizamos bOrdered
-        if (current->ptrPrev != NULL && current->ptrPrev->iValue > current->iValue) bOrdered = false; 
-
+    {
         // Se algum nó for menor que o pivô, atualizamos o pivô
         if (current->iValue < ptrPivot->iValue) ptrPivot = current;
         current = current->ptrNext;
@@ -501,7 +486,7 @@ void optimizedSelectionSort_Aux(Node* ptrAtual, bool bOrdered)
     if (ptrPivot != ptrAtual) swapValue(ptrPivot->iValue,ptrAtual->iValue);
 
     // Chamamos recursivamente a função
-    optimizedSelectionSort_Aux(ptrAtual->ptrNext, bOrdered);
+    selectionSort_Aux(ptrAtual->ptrNext);
 }
 
 void optimizedSelectionSort(Node* head)
@@ -518,6 +503,6 @@ void optimizedSelectionSort(Node* head)
     }
     else
     {
-        optimizedSelectionSort_Aux(head, false);
+        optimizedSelectionSort_Aux(head);
     }
 }
